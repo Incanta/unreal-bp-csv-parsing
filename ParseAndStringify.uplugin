@@ -17,7 +17,7 @@
   "Installed": false,
   "Modules": [
     {
-      "Name": "Parser",
+      "Name": "ParseAndStringify",
       "Type": "Runtime",
       "LoadingPhase": "PreLoadingScreen",
       "WhitelistPlatforms": [ "Win64", "Win32", "Mac", "Linux" ]
