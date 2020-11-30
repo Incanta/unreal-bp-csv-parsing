@@ -1,0 +1,26 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "Parser",
+  "Description": "A plugin that provides blueprint nodes to parse formatted strings.",
+  "Category": "Code Plugins",
+  "CreatedBy": "Incanta Games",
+  "CreatedByURL": "https://incanta.games",
+  "DocsURL": "",
+  "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/",
+  "SupportURL": "https://discord.gg/5hFrK2D",
+  "EngineVersion": "4.25.0",
+  "CanContainContent": false,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "Parser",
+      "Type": "Runtime",
+      "LoadingPhase": "PreLoadingScreen",
+      "WhitelistPlatforms": [ "Win64", "Win32", "Mac", "Linux" ]
+    }
+  ]
+}
