@@ -2,8 +2,8 @@
 
 using UnrealBuildTool;
 
-public class Parser : ModuleRules {
-  public Parser(ReadOnlyTargetRules Target) : base(Target) {
+public class ParseAndStringify : ModuleRules {
+  public ParseAndStringify(ReadOnlyTargetRules Target) : base(Target) {
     PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
     PublicIncludePaths.AddRange(
