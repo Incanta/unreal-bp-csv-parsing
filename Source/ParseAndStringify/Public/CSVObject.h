@@ -106,6 +106,7 @@ class UCSVObject : public UObject {
 
 private:
   csv::CSVReader * parser;
+  std::vector<csv::CSVRow> rows;
 
   friend class UParseAndStringifyBPLibrary;
 };

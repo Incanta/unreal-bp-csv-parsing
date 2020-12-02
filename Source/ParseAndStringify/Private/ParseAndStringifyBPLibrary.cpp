@@ -74,6 +74,8 @@ UCSVObject * UParseAndStringifyBPLibrary::ParseCSVRows(
       csvObject->RowKeys.Push(value.c_str());
     }
 
+    csvObject->rows.push_back(row);
+
     csvObject->RowCount++;
   }
 

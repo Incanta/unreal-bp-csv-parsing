@@ -11,17 +11,14 @@ UCSVObject::UCSVObject(
 TArray<FString> UCSVObject::GetColumnByName(FString ColumnName) {
   TArray<FString> columnValues;
 
-  int columnIndex = this->parser->index_of(TCHAR_TO_ANSI(*ColumnName));
+  int columnIndex = this->ColumnNames.Find(ColumnName);
 
-  if (columnIndex == csv::CSV_NOT_FOUND) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE1"));
+  if (columnIndex == INDEX_NONE) {
     return columnValues;
   }
 
-  for (auto & row : *this->parser) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE2"));
+  for (auto & row : this->rows) {
     if (row.size() > columnIndex) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE3"));
       std::string value = row[columnIndex].get();
       columnValues.Push(value.c_str());
     }
@@ -34,14 +31,11 @@ TArray<FString> UCSVObject::GetColumnByIndex(int ColumnIndex) {
   TArray<FString> columnValues;
 
   if (ColumnIndex < 0 || ColumnIndex >= this->ColumnCount) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE4"));
     return columnValues;
   }
 
-  for (auto & row : *this->parser) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE5"));
+  for (auto & row : this->rows) {
     if (row.size() > ColumnIndex) {
-    UE_LOG(LogTemp, Warning, TEXT("HERE6"));
       std::string value = row[ColumnIndex].get();
       columnValues.Push(value.c_str());
     }
@@ -59,11 +53,7 @@ TArray<FString> UCSVObject::GetRowByKey(FString RowKey) {
     return rowValues;
   }
 
-  auto it = this->parser->begin();
-  for (int i = 0; i < rowIndex; i++) {
-    it++;
-  }
-  auto row = *it;
+  auto row = this->rows.at(rowIndex);
 
   for (auto & cell : row) {
     std::string value = cell.get();
@@ -80,11 +70,7 @@ TArray<FString> UCSVObject::GetRowByIndex(int RowIndex) {
     return rowValues;
   }
 
-  auto it = this->parser->begin();
-  for (int i = 0; i < RowIndex; i++) {
-    it++;
-  }
-  auto row = *it;
+  auto row = this->rows.at(RowIndex);
 
   for (auto & cell : row) {
     std::string value = cell.get();
