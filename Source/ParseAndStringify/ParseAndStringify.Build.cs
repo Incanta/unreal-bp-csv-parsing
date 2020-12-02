@@ -5,6 +5,8 @@ using UnrealBuildTool;
 public class ParseAndStringify : ModuleRules {
   public ParseAndStringify(ReadOnlyTargetRules Target) : base(Target) {
     PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+    PrivatePCHHeaderFile = "Private/csv.hpp";
+    CppStandard = CppStandardVersion.Cpp17;
 
     PublicIncludePaths.AddRange(
       new string[] {
