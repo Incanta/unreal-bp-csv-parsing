@@ -50,7 +50,7 @@ UCSVObject * UParseAndStringifyBPLibrary::ParseCSVRows(
     format.column_names(stdColNames);
   }
 
-  auto inputString = static_cast<csv::string_view>(TCHAR_TO_ANSI(*CSVString));
+  auto inputString = static_cast<std::string>(TCHAR_TO_ANSI(*CSVString));
   std::stringstream stream(inputString.data());
   csvObject->parser = new csv::CSVReader(stream, format);
 
