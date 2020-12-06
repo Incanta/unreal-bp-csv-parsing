@@ -26,10 +26,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "ParseAndStringify.h"
+
 // UE4: allow Windows platform types to avoid naming collisions
 // must be undone at the bottom of this file!
-#include "Windows/AllowWindowsPlatformTypes.h"
-#include "Windows/PreWindowsApi.h"
+#ifdef _WIN32
+    #include "Windows/AllowWindowsPlatformTypes.h"
+    #include "Windows/PreWindowsApi.h"
+#endif
 
 #ifndef CSV_HPP
 #define CSV_HPP
@@ -4696,12 +4700,24 @@ namespace csv {
      *  Intended for functions and methods.
      */
 
-#if CMAKE_CXX_STANDARD == 17 || __cplusplus >= 201703L
-#define CSV_HAS_CXX17
+#ifdef CMAKE_CXX_STANDARD
+    #if CMAKE_CXX_STANDARD == 17
+    #define CSV_HAS_CXX17
+    #endif
+
+    #if CMAKE_CXX_STANDARD >= 14
+    #define CSV_HAS_CXX14
+    #endif
 #endif
 
-#if CMAKE_CXX_STANDARD >= 14 || __cplusplus >= 	201402L
-#define CSV_HAS_CXX14
+#ifdef __cplusplus
+    #if __cplusplus >= 201703L
+    #define CSV_HAS_CXX17
+    #endif
+
+    #if __cplusplus >= 201402L
+    #define CSV_HAS_CXX14
+    #endif
 #endif
 
 #ifdef CSV_HAS_CXX17
@@ -4980,7 +4996,14 @@ namespace csv {
         char get_delim() const {
             // This error should never be received by end users.
             if (this->possible_delimiters.size() > 1) {
-                throw std::runtime_error("There is more than one possible delimiter.");
+                char firstDelimiter = this->possible_delimiters.at(0);
+                UE_LOG(
+                    LogParseAndStringify,
+                    Warning,
+                    TEXT("There is more than one possible delimiter; using first one: %c."),
+                    firstDelimiter
+                );
+                return firstDelimiter;
             }
 
             return this->possible_delimiters.at(0);
@@ -5558,19 +5581,22 @@ namespace csv {
             IF_CONSTEXPR(std::is_arithmetic<T>::value) {
                 // Note: this->type() also converts the CSV value to float
                 if (this->type() <= DataType::CSV_STRING) {
-                    throw std::runtime_error(internals::ERROR_NAN);
+                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
+                    return static_cast<T>(0);
                 }
             }
 
             IF_CONSTEXPR(std::is_integral<T>::value) {
                 // Note: this->is_float() also converts the CSV value to float
                 if (this->is_float()) {
-                    throw std::runtime_error(internals::ERROR_FLOAT_TO_INT);
+                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_FLOAT_TO_INT.c_str());
+                    return static_cast<T>(0);
                 }
 
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     if (this->value < 0) {
-                        throw std::runtime_error(internals::ERROR_NEG_TO_UNSIGNED);
+                        UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NEG_TO_UNSIGNED.c_str());
+                        return static_cast<T>(0);
                     }
                 }
             }
@@ -5580,11 +5606,13 @@ namespace csv {
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     // Quick hack to perform correct unsigned integer boundary checks
                     if (this->value > internals::get_uint_max<sizeof(T)>()) {
-                        throw std::runtime_error(internals::ERROR_OVERFLOW);
+                        UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning max!"), internals::ERROR_OVERFLOW.c_str());
+                        return static_cast<T>(internals::get_uint_max<sizeof(T)>());
                     }
                 }
                 else if (internals::type_num<T>() < this->_type) {
-                    throw std::runtime_error(internals::ERROR_OVERFLOW);
+                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_OVERFLOW.c_str());
+                    return static_cast<T>(0);
                 }
             }
 
@@ -5803,8 +5831,10 @@ namespace csv {
     /** Retrieve this field's value as a long double */
     template<>
     CONSTEXPR long double CSVField::get<long double>() {
-        if (!is_num())
-            throw std::runtime_error(internals::ERROR_NAN);
+        if (!is_num()) {
+            UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
+            return 0.0f;
+        }
 
         return this->value;
     }
@@ -6117,7 +6147,7 @@ namespace csv {
             StreamParser(TStream& source,
                 const CSVFormat& format,
                 const ColNamesPtr& col_names = nullptr
-            ) : _source(std::move(source)), IBasicCSVParser(format, col_names) {};
+            ) : IBasicCSVParser(format, col_names), _source(std::move(source)) {};
 
             StreamParser(
                 TStream& source,
@@ -6315,7 +6345,7 @@ namespace csv {
         CSVReader(const CSVReader&) = delete; // No copy constructor
         CSVReader(CSVReader&&) = default;     // Move constructor
         CSVReader& operator=(const CSVReader&) = delete; // No copy assignment
-        CSVReader& operator=(CSVReader&& other) = default;
+        // CSVReader& operator=(CSVReader&& other) = default;
         ~CSVReader() {
             if (this->read_csv_worker.joinable()) {
                 this->read_csv_worker.join();
@@ -6803,7 +6833,8 @@ namespace csv {
             auto mmap = mio::make_mmap_source(std::string(filename), 0, length, error);
 
             if (error) {
-                throw std::runtime_error("Cannot open file " + std::string(filename));
+                UE_LOG(LogParseAndStringify, Error, TEXT("Cannot open file %s; returning empty string"), std::string(filename).c_str());
+                return std::string();
             }
 
             return std::string(mmap.begin(), mmap.end());
@@ -7018,7 +7049,10 @@ namespace csv {
             std::error_code error;
             this->data_ptr->_data = std::make_shared<mio::basic_mmap_source<char>>(mio::make_mmap_source(this->_filename, this->mmap_pos, length, error));
             this->mmap_pos += length;
-            if (error) throw error;
+            if (error) {
+                UE_LOG(LogParseAndStringify, Error, TEXT("Received an error code %d when running make_mmap_source."), error.value());
+                return;
+            }
 
             auto mmap_ptr = (mio::basic_mmap_source<char>*)(this->data_ptr->_data.get());
 
@@ -7157,7 +7191,8 @@ namespace csv {
                     err_msg += ", ";
             }
 
-            throw std::runtime_error(err_msg + '.');
+            UE_LOG(LogParseAndStringify, Error, TEXT("%s."), err_msg.c_str());
+            return;
         }
     }
 }
@@ -7452,14 +7487,17 @@ namespace csv {
                 auto errored_row = this->records.pop_front();
 
                 if (this->_format.variable_column_policy == VariableColumnPolicy::THROW) {
-                    if (errored_row.size() < this->n_cols)
-                        throw std::runtime_error("Line too short " + internals::format_row(errored_row));
+                    if (errored_row.size() < this->n_cols) {
+                        UE_LOG(LogParseAndStringify, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                        return false;
+                    }
 
-                    throw std::runtime_error("Line too long " + internals::format_row(errored_row));
+                    UE_LOG(LogParseAndStringify, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                    return false;
                 }
             }
             else {
-                row = std::move(this->records.pop_front());
+                row = this->records.pop_front();
                 this->_n_rows++;
                 return true;
             }
@@ -7484,7 +7522,7 @@ namespace csv {
             if (this->records.empty()) return this->end();
         }
 
-        CSVReader::iterator ret(this, std::move(this->records.pop_front()));
+        CSVReader::iterator ret(this, this->records.pop_front());
         return ret;
     }
 
@@ -7581,7 +7619,8 @@ namespace csv {
             return this->operator[](col_pos);
         }
 
-        throw std::runtime_error("Can't find a column named " + col_name);
+        UE_LOG(LogParseAndStringify, Error, TEXT("Can't find a column named %s"), col_name.c_str());
+        return CSVField("");
     }
 
     CSV_INLINE CSVRow::operator std::vector<std::string>() const {
@@ -7596,8 +7635,10 @@ namespace csv {
     {
         using internals::ParseFlags;
 
-        if (index >= this->size())
-            throw std::runtime_error("Index out of bounds.");
+        if (index >= this->size()) {
+            UE_LOG(LogParseAndStringify, Error, TEXT("Index out of bounds; returning empty string."));
+            return "";
+        }
 
         const size_t field_index = this->fields_start + index;
         auto& field = this->data->fields[field_index];
@@ -8123,7 +8164,13 @@ namespace csv {
                 }
             }
             else if (this->reader.get_format().get_variable_column_policy() == VariableColumnPolicy::THROW) {
-                throw std::runtime_error("Line has different length than the others " + internals::format_row(*current_record));
+                UE_LOG(
+                    LogParseAndStringify,
+                    Error,
+                    TEXT("Line has different length than the others %s"),
+                    internals::format_row(*current_record).c_str()
+                );
+                return;
             }
 
             ++current_record;
@@ -8325,5 +8372,7 @@ namespace csv {
 
 // UE4: disallow windows platform types
 // this was enabled at the top of the file
-#include "Windows/PostWindowsApi.h"
-#include "Windows/HideWindowsPlatformTypes.h"
+#ifdef _WIN32
+    #include "Windows/PostWindowsApi.h"
+    #include "Windows/HideWindowsPlatformTypes.h"
+#endif

@@ -18,7 +18,7 @@ TArray<FString> UCSVObject::GetColumnByName(FString ColumnName) {
   }
 
   for (auto & row : this->rows) {
-    if (row.size() > columnIndex) {
+    if (row.size() > static_cast<unsigned int>(columnIndex)) {
       std::string value = row[columnIndex].get();
       columnValues.Push(value.c_str());
     }
@@ -35,7 +35,7 @@ TArray<FString> UCSVObject::GetColumnByIndex(int ColumnIndex) {
   }
 
   for (auto & row : this->rows) {
-    if (row.size() > ColumnIndex) {
+    if (row.size() > static_cast<unsigned int>(ColumnIndex)) {
       std::string value = row[ColumnIndex].get();
       columnValues.Push(value.c_str());
     }

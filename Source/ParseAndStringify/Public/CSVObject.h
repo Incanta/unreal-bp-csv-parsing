@@ -4,9 +4,10 @@
 
 #include "UObject/Object.h"
 #include "csv.hpp"
-#include "ParseAndStringifyBPLibrary.h"
 
 #include "CSVObject.generated.h"
+
+class UParseAndStringifyBPLibrary;
 
 UCLASS(BlueprintType, Blueprintable)
 class UCSVObject : public UObject {

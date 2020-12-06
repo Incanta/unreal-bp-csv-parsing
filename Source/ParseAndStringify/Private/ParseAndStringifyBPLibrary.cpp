@@ -65,11 +65,11 @@ UCSVObject * UParseAndStringifyBPLibrary::ParseCSVRows(
   }
 
   for (auto & row : *csvObject->parser) {
-    if (row.size() > csvObject->ColumnCount) {
+    if (row.size() > static_cast<unsigned int>(csvObject->ColumnCount)) {
       csvObject->ColumnCount = row.size();
     }
 
-    if (KeysColumn >= 0 && row.size() > KeysColumn) {
+    if (KeysColumn >= 0 && row.size() > static_cast<unsigned int>(KeysColumn)) {
       std::string value = row[KeysColumn].get();
       csvObject->RowKeys.Push(value.c_str());
     }
