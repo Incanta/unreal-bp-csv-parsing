@@ -7,7 +7,7 @@
 
 #include "CSVObject.generated.h"
 
-class UParseAndStringifyBPLibrary;
+class UDataSerializationBPLibrary;
 
 UCLASS(BlueprintType, Blueprintable)
 class UCSVObject : public UObject {
@@ -109,5 +109,5 @@ private:
   csv::CSVReader * parser;
   std::vector<csv::CSVRow> rows;
 
-  friend class UParseAndStringifyBPLibrary;
+  friend class UDataSerializationBPLibrary;
 };

@@ -6,10 +6,10 @@
 #include "csv.hpp"
 #include "CSVObject.h"
 
-#include "ParseAndStringifyBPLibrary.generated.h"
+#include "DataSerializationBPLibrary.generated.h"
 
 UCLASS()
-class UParseAndStringifyBPLibrary : public UBlueprintFunctionLibrary {
+class UDataSerializationBPLibrary : public UBlueprintFunctionLibrary {
   GENERATED_UCLASS_BODY()
 
   UFUNCTION(

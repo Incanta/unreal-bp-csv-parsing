@@ -1,14 +1,14 @@
 // Copyright Incanta Games 2020. All Rights Reserved.
 
-#include "ParseAndStringifyBPLibrary.h"
+#include "DataSerializationBPLibrary.h"
 
-UParseAndStringifyBPLibrary::UParseAndStringifyBPLibrary(
+UDataSerializationBPLibrary::UDataSerializationBPLibrary(
   const FObjectInitializer& ObjectInitializer
 ) : Super(ObjectInitializer) {
   //
 }
 
-UCSVObject * UParseAndStringifyBPLibrary::ParseCSVRows(
+UCSVObject * UDataSerializationBPLibrary::ParseCSVRows(
   FString CSVString,
   TArray<FString> ColumnNames,
   FString DelimiterCharacter,

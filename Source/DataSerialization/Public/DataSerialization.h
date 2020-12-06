@@ -4,9 +4,9 @@
 
 #include "Modules/ModuleManager.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogParseAndStringify, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogDataSerialization, Log, All);
 
-class FParseAndStringifyModule : public IModuleInterface {
+class FDataSerializationModule : public IModuleInterface {
 public:
 
   /** IModuleInterface implementation */

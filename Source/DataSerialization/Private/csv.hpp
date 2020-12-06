@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "ParseAndStringify.h"
+#include "DataSerialization.h"
 
 // UE4: allow Windows platform types to avoid naming collisions
 // must be undone at the bottom of this file!
@@ -4998,7 +4998,7 @@ namespace csv {
             if (this->possible_delimiters.size() > 1) {
                 char firstDelimiter = this->possible_delimiters.at(0);
                 UE_LOG(
-                    LogParseAndStringify,
+                    LogDataSerialization,
                     Warning,
                     TEXT("There is more than one possible delimiter; using first one: %c."),
                     firstDelimiter
@@ -5581,7 +5581,7 @@ namespace csv {
             IF_CONSTEXPR(std::is_arithmetic<T>::value) {
                 // Note: this->type() also converts the CSV value to float
                 if (this->type() <= DataType::CSV_STRING) {
-                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
                     return static_cast<T>(0);
                 }
             }
@@ -5589,13 +5589,13 @@ namespace csv {
             IF_CONSTEXPR(std::is_integral<T>::value) {
                 // Note: this->is_float() also converts the CSV value to float
                 if (this->is_float()) {
-                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_FLOAT_TO_INT.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_FLOAT_TO_INT.c_str());
                     return static_cast<T>(0);
                 }
 
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     if (this->value < 0) {
-                        UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NEG_TO_UNSIGNED.c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NEG_TO_UNSIGNED.c_str());
                         return static_cast<T>(0);
                     }
                 }
@@ -5606,12 +5606,12 @@ namespace csv {
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     // Quick hack to perform correct unsigned integer boundary checks
                     if (this->value > internals::get_uint_max<sizeof(T)>()) {
-                        UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning max!"), internals::ERROR_OVERFLOW.c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("%s; returning max!"), internals::ERROR_OVERFLOW.c_str());
                         return static_cast<T>(internals::get_uint_max<sizeof(T)>());
                     }
                 }
                 else if (internals::type_num<T>() < this->_type) {
-                    UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_OVERFLOW.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_OVERFLOW.c_str());
                     return static_cast<T>(0);
                 }
             }
@@ -5832,7 +5832,7 @@ namespace csv {
     template<>
     CONSTEXPR long double CSVField::get<long double>() {
         if (!is_num()) {
-            UE_LOG(LogParseAndStringify, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
+            UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
             return 0.0f;
         }
 
@@ -6833,7 +6833,7 @@ namespace csv {
             auto mmap = mio::make_mmap_source(std::string(filename), 0, length, error);
 
             if (error) {
-                UE_LOG(LogParseAndStringify, Error, TEXT("Cannot open file %s; returning empty string"), std::string(filename).c_str());
+                UE_LOG(LogDataSerialization, Error, TEXT("Cannot open file %s; returning empty string"), std::string(filename).c_str());
                 return std::string();
             }
 
@@ -7050,7 +7050,7 @@ namespace csv {
             this->data_ptr->_data = std::make_shared<mio::basic_mmap_source<char>>(mio::make_mmap_source(this->_filename, this->mmap_pos, length, error));
             this->mmap_pos += length;
             if (error) {
-                UE_LOG(LogParseAndStringify, Error, TEXT("Received an error code %d when running make_mmap_source."), error.value());
+                UE_LOG(LogDataSerialization, Error, TEXT("Received an error code %d when running make_mmap_source."), error.value());
                 return;
             }
 
@@ -7191,7 +7191,7 @@ namespace csv {
                     err_msg += ", ";
             }
 
-            UE_LOG(LogParseAndStringify, Error, TEXT("%s."), err_msg.c_str());
+            UE_LOG(LogDataSerialization, Error, TEXT("%s."), err_msg.c_str());
             return;
         }
     }
@@ -7488,11 +7488,11 @@ namespace csv {
 
                 if (this->_format.variable_column_policy == VariableColumnPolicy::THROW) {
                     if (errored_row.size() < this->n_cols) {
-                        UE_LOG(LogParseAndStringify, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
                         return false;
                     }
 
-                    UE_LOG(LogParseAndStringify, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
                     return false;
                 }
             }
@@ -7619,7 +7619,7 @@ namespace csv {
             return this->operator[](col_pos);
         }
 
-        UE_LOG(LogParseAndStringify, Error, TEXT("Can't find a column named %s"), col_name.c_str());
+        UE_LOG(LogDataSerialization, Error, TEXT("Can't find a column named %s"), col_name.c_str());
         return CSVField("");
     }
 
@@ -7636,7 +7636,7 @@ namespace csv {
         using internals::ParseFlags;
 
         if (index >= this->size()) {
-            UE_LOG(LogParseAndStringify, Error, TEXT("Index out of bounds; returning empty string."));
+            UE_LOG(LogDataSerialization, Error, TEXT("Index out of bounds; returning empty string."));
             return "";
         }
 
@@ -8165,7 +8165,7 @@ namespace csv {
             }
             else if (this->reader.get_format().get_variable_column_policy() == VariableColumnPolicy::THROW) {
                 UE_LOG(
-                    LogParseAndStringify,
+                    LogDataSerialization,
                     Error,
                     TEXT("Line has different length than the others %s"),
                     internals::format_row(*current_record).c_str()

@@ -2,7 +2,7 @@
   "FileVersion": 3,
   "Version": 1,
   "VersionName": "1.0",
-  "FriendlyName": "ParseAndStringify",
+  "FriendlyName": "DataSerialization",
   "Description": "A plugin that provides blueprint nodes to parse formatted strings and to stringify data tables.",
   "Category": "Code Plugins",
   "CreatedBy": "Incanta Games",
@@ -17,7 +17,7 @@
   "Installed": false,
   "Modules": [
     {
-      "Name": "ParseAndStringify",
+      "Name": "DataSerialization",
       "Type": "Runtime",
       "LoadingPhase": "PreLoadingScreen",
       "WhitelistPlatforms": [ "Win64", "Win32", "Mac", "Linux" ]
