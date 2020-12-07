@@ -14,8 +14,7 @@ UCSVObject * UDataSerializationBPLibrary::ParseCSVRows(
   FString DelimiterCharacter,
   FString QuoteCharacter,
   int HeaderRow,
-  int KeysColumn,
-  int FirstColumn
+  int KeysColumn
 ) {
   UCSVObject * csvObject = NewObject<UCSVObject>();
   csv::CSVFormat format;

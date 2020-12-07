@@ -27,7 +27,6 @@ class UDataSerializationBPLibrary : public UBlueprintFunctionLibrary {
     FString DelimiterCharacter = ",",
     FString QuoteCharacter = "\"",
     int HeaderRow = -1,
-    int KeysColumn = -1,
-    int FirstColumn = 0
+    int KeysColumn = -1
   );
 };
