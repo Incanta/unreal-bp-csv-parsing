@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 1,
-  "VersionName": "1.0",
+  "Version": 2,
+  "VersionName": "1.1",
   "FriendlyName": "DataSerialization",
   "Description": "A plugin that provides blueprint nodes to parse formatted strings and to stringify data tables.",
   "Category": "Code Plugins",
