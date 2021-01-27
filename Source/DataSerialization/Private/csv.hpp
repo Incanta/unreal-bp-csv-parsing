@@ -5830,9 +5830,8 @@ namespace csv {
 
     /** Retrieve this field's value as a long double */
     template<>
-    long double CSVField::get<long double>() {
+    CONSTEXPR long double CSVField::get<long double>() {
         if (!is_num()) {
-            UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
             return 0.0f;
         }
 

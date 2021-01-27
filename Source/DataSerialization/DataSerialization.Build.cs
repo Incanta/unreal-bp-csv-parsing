@@ -5,7 +5,6 @@ using UnrealBuildTool;
 public class DataSerialization : ModuleRules {
   public DataSerialization(ReadOnlyTargetRules Target) : base(Target) {
     PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-    PrivatePCHHeaderFile = "Private/csv.hpp";
     CppStandard = CppStandardVersion.Cpp17;
 
     PublicIncludePaths.AddRange(
