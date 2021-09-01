@@ -4,6 +4,7 @@
 
 #include "UObject/Object.h"
 #include "csv.hpp"
+#include <sstream>
 
 #include "CSVObject.generated.h"
 
@@ -93,6 +94,145 @@ class UCSVObject : public UObject {
   )
   int GetRowIndexForKey(FString Key);
 
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Generate CSV String",
+      Keywords = "serialization get to generate csv tsv comma tab separated value string serialize"
+    ),
+    Category = "Serialization | CSV"
+  )
+  FString GenerateCSVString(
+    bool IncludeHeaderRow = true,
+    FString DelimiterCharacter = ",",
+    FString QuoteCharacter = "\""
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Set Column Names",
+      Keywords = "serialization set column header names row"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void SetColumnNames(
+    TArray<FString> ColumnNames
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Add Column Name",
+      Keywords = "serialization add column header name row"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void AddColumnName(
+    FString ColumnName
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Add Row",
+      Keywords = "serialization add row"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void AddRow(
+    TArray<FString> Cells
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Insert Row",
+      Keywords = "serialization insert row"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void InsertRow(
+    TArray<FString> Cells,
+    int RowIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Add Cell",
+      Keywords = "serialization add cell"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void AddCell(
+    FString Value,
+    int RowIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Insert Cell",
+      Keywords = "serialization insert cell"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void InsertCell(
+    FString Value,
+    int RowIndex,
+    int ColumnIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Delete Row",
+      Keywords = "serialization delete row"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void DeleteRow(
+    int RowIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Delete Cell",
+      Keywords = "serialization delete cell"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void DeleteCell(
+    int RowIndex,
+    int ColumnIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Set Cell",
+      Keywords = "serialization set cell"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void SetCell(
+    FString Value,
+    int RowIndex,
+    int ColumnIndex
+  );
+
+  UFUNCTION(
+    BlueprintCallable,
+    meta = (
+      DisplayName = "Clear CSV Object",
+      Keywords = "serialization clear csv object"
+    ),
+    Category = "Serialization | CSV"
+  )
+  void Clear();
+
   UPROPERTY(BlueprintReadOnly, Category = "Details")
   int ColumnCount;
 
@@ -107,7 +247,7 @@ class UCSVObject : public UObject {
 
 private:
   csv::CSVReader * parser;
-  std::vector<csv::CSVRow> rows;
+  std::vector<std::vector<std::string>> rows;
 
   friend class UDataSerializationBPLibrary;
 };

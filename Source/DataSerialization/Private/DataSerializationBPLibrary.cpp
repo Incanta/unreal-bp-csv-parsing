@@ -73,7 +73,7 @@ UCSVObject * UDataSerializationBPLibrary::ParseCSVRows(
       csvObject->RowKeys.Push(value.c_str());
     }
 
-    csvObject->rows.push_back(row);
+    csvObject->rows.push_back(row.operator std::vector<std::string, std::allocator<std::string>>());
 
     csvObject->RowCount++;
   }

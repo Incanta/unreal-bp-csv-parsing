@@ -6609,18 +6609,13 @@ namespace csv {
      *  @tparam Delim        The delimiter character
      *  @tparam Quote        The quote character
      *
-     *  @par Hint
-     *  Use the aliases csv::CSVWriter<OutputStream> to write CSV
-     *  formatted strings and csv::TSVWriter<OutputStream>
-     *  to write tab separated strings
-     *
      *  @par Example w/ std::vector, std::deque, std::list
      *  @snippet test_write_csv.cpp CSV Writer Example
      *
      *  @par Example w/ std::tuple
      *  @snippet test_write_csv.cpp CSV Writer Tuple Example
      */
-    template<class OutputStream, char Delim, char Quote>
+    template<class OutputStream>
     class DelimWriter {
     public:
         /** Construct a DelimWriter over the specified output stream
@@ -6628,14 +6623,15 @@ namespace csv {
          *  @param  _out           Stream to write to
          *  @param  _quote_minimal Limit field quoting to only when necessary
         */
-        DelimWriter(OutputStream& _out, bool _quote_minimal = true)
-            : out(_out), quote_minimal(_quote_minimal) {};
+        DelimWriter(OutputStream& _out, char _Delim, char _Quote, bool _quote_minimal = true)
+            : Delim(_Delim), Quote(_Quote), out(_out), quote_minimal(_quote_minimal) {};
 
         /** Construct a DelimWriter over the file
          *
          *  @param[out] filename  File to write to
          */
-        DelimWriter(const std::string& filename) : DelimWriter(std::ifstream(filename)) {};
+        DelimWriter(const std::string& filename, char _Delim, char _Quote)
+            : DelimWriter(std::ifstream(filename)), Delim(_Delim), Quote(_Quote) {};
 
         /** Format a sequence of strings and write to CSV according to RFC 4180
          *
@@ -6688,6 +6684,9 @@ namespace csv {
         }
 
     private:
+        char Delim;
+        char Quote;
+
         template<
             typename T,
             csv::enable_if_t<
@@ -6772,39 +6771,6 @@ namespace csv {
         OutputStream & out;
         bool quote_minimal;
     };
-
-    /** An alias for csv::DelimWriter for writing standard CSV files
-     *
-     *  @sa csv::DelimWriter::operator<<()
-     *
-     *  @note Use `csv::make_csv_writer()` to in instatiate this class over
-     *        an actual output stream.
-     */
-    template<class OutputStream>
-    using CSVWriter = DelimWriter<OutputStream, ',', '"'>;
-
-    /** Class for writing tab-separated values files
-*
-     *  @sa csv::DelimWriter::write_row()
-     *  @sa csv::DelimWriter::operator<<()
-     *
-     *  @note Use `csv::make_tsv_writer()` to in instatiate this class over
-     *        an actual output stream.
-     */
-    template<class OutputStream>
-    using TSVWriter = DelimWriter<OutputStream, '\t', '"'>;
-
-    /** Return a csv::CSVWriter over the output stream */
-    template<class OutputStream>
-    inline CSVWriter<OutputStream> make_csv_writer(OutputStream& out, bool quote_minimal=true) {
-        return CSVWriter<OutputStream>(out, quote_minimal);
-    }
-
-    /** Return a csv::TSVWriter over the output stream */
-    template<class OutputStream>
-    inline TSVWriter<OutputStream> make_tsv_writer(OutputStream& out, bool quote_minimal=true) {
-        return TSVWriter<OutputStream>(out, quote_minimal);
-    }
     ///@}
 }
 
