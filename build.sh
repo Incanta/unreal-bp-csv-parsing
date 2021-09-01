@@ -1,10 +1,10 @@
 # only used in windows for cross compiling
-export LINUX_MULTIARCH_ROOT=/c/UnrealToolchains/v17_clang-10.0.1-centos7/
+export LINUX_MULTIARCH_ROOT=/c/UnrealToolchains/v19_clang-11.0.1-centos7/
 if [ "$(uname)" != "Darwin" ]; then
   ${LINUX_MULTIARCH_ROOT}x86_64-unknown-linux-gnu/bin/clang++ -v
 fi
 
-export ENGINE_VERSION=4.26
+export ENGINE_VERSION=4.27
 export PLUGIN_NAME=$(basename $(pwd))
 
 if [ "$(uname)" == "Darwin" ]; then
