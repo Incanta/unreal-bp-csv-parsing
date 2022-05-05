@@ -30,7 +30,11 @@ UCSVObject * UDataSerializationBPLibrary::ParseCSVRows(
     format.quote(false);
   } else {
     char * c = TCHAR_TO_ANSI(*QuoteCharacter);
-    format.quote(c[0]);
+    if (QuoteCharacter.Len() > 1 && c[0] == '\\' && c[1] != '\0') {
+      format.quote(c[1]);
+    } else {
+      format.quote(c[0]);
+    }
   }
 
   if (HeaderRow < 0) {
