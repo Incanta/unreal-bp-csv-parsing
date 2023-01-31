@@ -1,9 +1,9 @@
 {
   "FileVersion": 3,
-  "Version": 3,
-  "VersionName": "1.2",
-  "FriendlyName": "DataSerialization",
-  "Description": "A plugin that provides blueprint nodes to parse formatted strings and to stringify data tables.",
+  "Version": 4,
+  "VersionName": "1.3",
+  "FriendlyName": "Blueprint CSV Parsing",
+  "Description": "A plugin that provides blueprint nodes to parse CSV formatted strings. Formally known as DataSerialization.",
   "Category": "Code Plugins",
   "CreatedBy": "Incanta Games",
   "CreatedByURL": "https://incanta.games",
