@@ -22,18 +22,16 @@ UCSVObject * UDataSerializationBPLibrary::ParseCSVRows(
   if (DelimiterCharacter.Len() == 0) {
     format.delimiter(',');
   } else {
-    char * c = TCHAR_TO_ANSI(*DelimiterCharacter);
-    format.delimiter(c[0]);
+    format.delimiter((char) DelimiterCharacter[0]);
   }
 
   if (QuoteCharacter.Len() == 0) {
     format.quote(false);
   } else {
-    char * c = TCHAR_TO_ANSI(*QuoteCharacter);
-    if (QuoteCharacter.Len() > 1 && c[0] == '\\' && c[1] != '\0') {
-      format.quote(c[1]);
-    } else {
-      format.quote(c[0]);
+    if (QuoteCharacter.Len() > 1 && QuoteCharacter[0] == '\\' && QuoteCharacter[1] != '\0') {
+      format.quote((char) QuoteCharacter[1]);
+    } else if (QuoteCharacter.Len() > 0) {
+      format.quote((char) QuoteCharacter[0]);
     }
   }
 
