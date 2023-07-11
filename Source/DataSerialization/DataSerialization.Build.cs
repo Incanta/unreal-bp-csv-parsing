@@ -1,5 +1,7 @@
 // Copyright Incanta Games 2020. All Rights Reserved.
 
+using System;
+using System.IO;
 using UnrealBuildTool;
 
 public class DataSerialization : ModuleRules {
@@ -7,8 +9,11 @@ public class DataSerialization : ModuleRules {
     PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
     CppStandard = CppStandardVersion.Cpp17;
 
+    String CsvLibraryPath = Path.Combine(PluginDirectory, "Source", "ThirdParty", "csv-parser");
+
     PublicIncludePaths.AddRange(
       new string[] {
+        Path.Combine(CsvLibraryPath, "include")
       }
       );
 
