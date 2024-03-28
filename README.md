@@ -16,7 +16,7 @@ Checkout the below links if you want to make sure you get the latest and greates
 
 We have a Discord server where you can get expedited support for both issues and feature requests: https://discord.gg/cDcP3rBBUc
 
-You can also make an issue on this GitHub repository: https://github.com/IncantaGames/unreal-bp-csv-parsing/issues
+You can also make an issue on this GitHub repository: https://github.com/Incanta/unreal-bp-csv-parsing/issues
 
 ## Donations
 
