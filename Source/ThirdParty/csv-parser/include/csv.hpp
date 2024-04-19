@@ -5001,7 +5001,7 @@ namespace csv {
                     LogDataSerialization,
                     Warning,
                     TEXT("There is more than one possible delimiter; using first one: %c."),
-                    firstDelimiter
+                    TCHAR(firstDelimiter)
                 );
                 return firstDelimiter;
             }
@@ -6832,7 +6832,7 @@ namespace csv {
             auto mmap = mio::make_mmap_source(std::string(filename), 0, length, error);
 
             if (error) {
-                UE_LOG(LogDataSerialization, Error, TEXT("Cannot open file %s; returning empty string"), std::string(filename).c_str());
+                UE_LOG(LogDataSerialization, Error, TEXT("Cannot open file %hs; returning empty string"), std::string(filename).c_str());
                 return std::string();
             }
 
@@ -7190,7 +7190,7 @@ namespace csv {
                     err_msg += ", ";
             }
 
-            UE_LOG(LogDataSerialization, Error, TEXT("%s."), err_msg.c_str());
+            UE_LOG(LogDataSerialization, Error, TEXT("%hs."), err_msg.c_str());
             return;
         }
     }
@@ -7487,11 +7487,11 @@ namespace csv {
 
                 if (this->_format.variable_column_policy == VariableColumnPolicy::THROW) {
                     if (errored_row.size() < this->n_cols) {
-                        UE_LOG(LogDataSerialization, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("Line too short %hs"), internals::format_row(errored_row).c_str());
                         return false;
                     }
 
-                    UE_LOG(LogDataSerialization, Error, TEXT("Line too short %s"), internals::format_row(errored_row).c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("Line too short %hs"), internals::format_row(errored_row).c_str());
                     return false;
                 }
             }
@@ -7618,7 +7618,7 @@ namespace csv {
             return this->operator[](col_pos);
         }
 
-        UE_LOG(LogDataSerialization, Error, TEXT("Can't find a column named %s"), col_name.c_str());
+        UE_LOG(LogDataSerialization, Error, TEXT("Can't find a column named %hs"), col_name.c_str());
         return CSVField("");
     }
 
@@ -8166,7 +8166,7 @@ namespace csv {
                 UE_LOG(
                     LogDataSerialization,
                     Error,
-                    TEXT("Line has different length than the others %s"),
+                    TEXT("Line has different length than the others %hs"),
                     internals::format_row(*current_record).c_str()
                 );
                 return;
