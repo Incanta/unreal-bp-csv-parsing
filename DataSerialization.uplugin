@@ -1,6 +1,6 @@
 {
   "FileVersion": 3,
-  "Version": 4,
+  "Version": 5,
   "VersionName": "1.4",
   "FriendlyName": "Blueprint CSV Parsing",
   "Description": "A plugin that provides blueprint nodes to parse CSV formatted strings. Formally known as DataSerialization.",
