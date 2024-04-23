@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 4,
-  "VersionName": "1.3",
+  "VersionName": "1.4",
   "FriendlyName": "Blueprint CSV Parsing",
   "Description": "A plugin that provides blueprint nodes to parse CSV formatted strings. Formally known as DataSerialization.",
   "Category": "Code Plugins",
@@ -9,7 +9,7 @@
   "CreatedByURL": "https://incanta.games",
   "DocsURL": "",
   "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/51bfff9f8bc34c3d8072b31455965276",
-  "SupportURL": "https://discord.gg/UQRbrKkdp7",
+  "SupportURL": "https://discord.gg/BSrAccCRYc",
   "EngineVersion": "5.4.0",
   "CanContainContent": false,
   "IsBetaVersion": false,
