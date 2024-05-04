@@ -4749,6 +4749,7 @@ namespace csv {
     using enable_if_t = typename std::enable_if<B, T>::type;
 #endif
 
+#ifndef CONSTEXPR
     // Resolves g++ bug with regard to constexpr methods
     // See: https://stackoverflow.com/questions/36489369/constexpr-non-static-member-function-with-non-constexpr-constructor-gcc-clang-d
 #if defined __GNUC__ && !defined __clang__
@@ -4764,6 +4765,8 @@ namespace csv {
 #ifndef CONSTEXPR
 #define CONSTEXPR inline
 #endif
+#endif
+
 
 #ifdef _MSC_VER
 #pragma endregion
@@ -5581,7 +5584,7 @@ namespace csv {
             IF_CONSTEXPR(std::is_arithmetic<T>::value) {
                 // Note: this->type() also converts the CSV value to float
                 if (this->type() <= DataType::CSV_STRING) {
-                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NAN.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%hs; returning 0!"), internals::ERROR_NAN.c_str());
                     return static_cast<T>(0);
                 }
             }
@@ -5589,13 +5592,13 @@ namespace csv {
             IF_CONSTEXPR(std::is_integral<T>::value) {
                 // Note: this->is_float() also converts the CSV value to float
                 if (this->is_float()) {
-                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_FLOAT_TO_INT.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%hs; returning 0!"), internals::ERROR_FLOAT_TO_INT.c_str());
                     return static_cast<T>(0);
                 }
 
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     if (this->value < 0) {
-                        UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_NEG_TO_UNSIGNED.c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("%hs; returning 0!"), internals::ERROR_NEG_TO_UNSIGNED.c_str());
                         return static_cast<T>(0);
                     }
                 }
@@ -5606,12 +5609,12 @@ namespace csv {
                 IF_CONSTEXPR(std::is_unsigned<T>::value) {
                     // Quick hack to perform correct unsigned integer boundary checks
                     if (this->value > internals::get_uint_max<sizeof(T)>()) {
-                        UE_LOG(LogDataSerialization, Error, TEXT("%s; returning max!"), internals::ERROR_OVERFLOW.c_str());
+                        UE_LOG(LogDataSerialization, Error, TEXT("%hs; returning max!"), internals::ERROR_OVERFLOW.c_str());
                         return static_cast<T>(internals::get_uint_max<sizeof(T)>());
                     }
                 }
                 else if (internals::type_num<T>() < this->_type) {
-                    UE_LOG(LogDataSerialization, Error, TEXT("%s; returning 0!"), internals::ERROR_OVERFLOW.c_str());
+                    UE_LOG(LogDataSerialization, Error, TEXT("%hs; returning 0!"), internals::ERROR_OVERFLOW.c_str());
                     return static_cast<T>(0);
                 }
             }
