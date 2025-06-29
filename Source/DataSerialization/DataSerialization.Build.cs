@@ -7,7 +7,7 @@ using UnrealBuildTool;
 public class DataSerialization : ModuleRules {
   public DataSerialization(ReadOnlyTargetRules Target) : base(Target) {
     PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-    CppStandard = CppStandardVersion.Cpp17;
+    CppStandard = CppStandardVersion.Cpp20;
 
     String CsvLibraryPath = Path.Combine(PluginDirectory, "Source", "ThirdParty", "csv-parser");
 

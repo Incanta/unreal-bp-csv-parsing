@@ -32,7 +32,9 @@ SOFTWARE.
 // must be undone at the bottom of this file!
 #ifdef _WIN32
     #include "Windows/AllowWindowsPlatformTypes.h"
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 4)
     #include "Windows/PreWindowsApi.h"
+#endif
 #endif
 
 #ifndef CSV_HPP
@@ -4984,13 +4986,13 @@ namespace csv {
         }
 
         /** Tells the parser how to handle columns of a different length than the others */
-        CONSTEXPR CSVFormat& variable_columns(VariableColumnPolicy policy = VariableColumnPolicy::IGNORE_ROW) {
+        constexpr CSVFormat& variable_columns(VariableColumnPolicy policy = VariableColumnPolicy::IGNORE_ROW) {
             this->variable_column_policy = policy;
             return *this;
         }
 
         /** Tells the parser how to handle columns of a different length than the others */
-        CONSTEXPR CSVFormat& variable_columns(bool policy) {
+        constexpr CSVFormat& variable_columns(bool policy) {
             this->variable_column_policy = (VariableColumnPolicy)policy;
             return *this;
         }
@@ -5012,12 +5014,12 @@ namespace csv {
             return this->possible_delimiters.at(0);
         }
 
-        CONSTEXPR bool is_quoting_enabled() const { return !this->no_quote; }
-        CONSTEXPR char get_quote_char() const { return this->quote_char; }
-        CONSTEXPR int get_header() const { return this->header; }
+        constexpr bool is_quoting_enabled() const { return !this->no_quote; }
+        constexpr char get_quote_char() const { return this->quote_char; }
+        constexpr int get_header() const { return this->header; }
         std::vector<char> get_possible_delims() const { return this->possible_delimiters; }
         std::vector<char> get_trim_chars() const { return this->trim_chars; }
-        CONSTEXPR VariableColumnPolicy get_variable_column_policy() const { return this->variable_column_policy; }
+        constexpr VariableColumnPolicy get_variable_column_policy() const { return this->variable_column_policy; }
         #endif
 
         /** CSVFormat for guessing the delimiter */
@@ -5112,7 +5114,7 @@ namespace csv {
     namespace internals {
         /** Compute 10 to the power of n */
         template<typename T>
-        HEDLEY_CONST CONSTEXPR
+        HEDLEY_CONST constexpr
         long double pow10(const T& n) noexcept {
             long double multiplicand = n > 0 ? 10 : 0.1,
                 ret = 1;
@@ -5129,7 +5131,7 @@ namespace csv {
 
         /** Compute 10 to the power of n */
         template<>
-        HEDLEY_CONST CONSTEXPR
+        HEDLEY_CONST constexpr
         long double pow10(const unsigned& n) noexcept {
             long double multiplicand = n > 0 ? 10 : 0.1,
                 ret = 1;
@@ -5167,7 +5169,7 @@ namespace csv {
         template<> inline DataType type_num<std::nullptr_t>() { return DataType::CSV_NULL; }
         template<> inline DataType type_num<std::string>() { return DataType::CSV_STRING; }
 
-        CONSTEXPR DataType data_type(csv::string_view in, long double* const out = nullptr);
+        constexpr DataType data_type(csv::string_view in, long double* const out = nullptr);
 #endif
 
         /** Given a byte size, return the largest number than can be stored in
@@ -5177,7 +5179,7 @@ namespace csv {
          *  byte sizes
          */
         template<size_t Bytes>
-        CONSTEXPR long double get_int_max() {
+        constexpr long double get_int_max() {
             static_assert(Bytes == 1 || Bytes == 2 || Bytes == 4 || Bytes == 8,
                 "Bytes must be a power of 2 below 8.");
 
@@ -5208,7 +5210,7 @@ namespace csv {
          *  an unsigned integer of that size
          */
         template<size_t Bytes>
-        CONSTEXPR long double get_uint_max() {
+        constexpr long double get_uint_max() {
             static_assert(Bytes == 1 || Bytes == 2 || Bytes == 4 || Bytes == 8,
                 "Bytes must be a power of 2 below 8.");
 
@@ -5263,7 +5265,7 @@ namespace csv {
          *  the exponential part of a number written (possibly) in scientific notation
          *  parse the exponent
          */
-        HEDLEY_PRIVATE CONSTEXPR
+        HEDLEY_PRIVATE constexpr
         DataType _process_potential_exponential(
             csv::string_view exponential_part,
             const long double& coeff,
@@ -5283,7 +5285,7 @@ namespace csv {
         /** Given the absolute value of an integer, determine what numeric type
          *  it fits in
          */
-        HEDLEY_PRIVATE HEDLEY_PURE CONSTEXPR
+        HEDLEY_PRIVATE HEDLEY_PURE constexpr
         DataType _determine_integral_type(const long double& number) noexcept {
             // We can assume number is always non-negative
             assert(number >= 0);
@@ -5311,7 +5313,7 @@ namespace csv {
          *  @param[out] out Pointer to long double where results of numeric parsing
          *                  get stored
          */
-        CONSTEXPR
+        constexpr
         DataType data_type(csv::string_view in, long double* const out) {
             // Empty string --> NULL
             if (in.size() == 0)
@@ -5636,7 +5638,7 @@ namespace csv {
          *  @sa      csv::CSVField::operator==(csv::string_view other)
          */
         template<typename T>
-        CONSTEXPR bool operator==(T other) const noexcept
+        constexpr bool operator==(T other) const noexcept
         {
             static_assert(std::is_arithmetic<T>::value,
                 "T should be a numeric value.");
@@ -5658,27 +5660,27 @@ namespace csv {
         }
 
         /** Return a string view over the field's contents */
-        CONSTEXPR csv::string_view get_sv() const noexcept { return this->sv; }
+        constexpr csv::string_view get_sv() const noexcept { return this->sv; }
 
         /** Returns true if field is an empty string or string of whitespace characters */
-        CONSTEXPR bool is_null() noexcept { return type() == DataType::CSV_NULL; }
+        constexpr bool is_null() noexcept { return type() == DataType::CSV_NULL; }
 
         /** Returns true if field is a non-numeric, non-empty string */
-        CONSTEXPR bool is_str() noexcept { return type() == DataType::CSV_STRING; }
+        constexpr bool is_str() noexcept { return type() == DataType::CSV_STRING; }
 
         /** Returns true if field is an integer or float */
-        CONSTEXPR bool is_num() noexcept { return type() >= DataType::CSV_INT8; }
+        constexpr bool is_num() noexcept { return type() >= DataType::CSV_INT8; }
 
         /** Returns true if field is an integer */
-        CONSTEXPR bool is_int() noexcept {
+        constexpr bool is_int() noexcept {
             return (type() >= DataType::CSV_INT8) && (type() <= DataType::CSV_INT64);
         }
 
         /** Returns true if field is a floating point value */
-        CONSTEXPR bool is_float() noexcept { return type() == DataType::CSV_DOUBLE; };
+        constexpr bool is_float() noexcept { return type() == DataType::CSV_DOUBLE; };
 
         /** Return the type of the underlying CSV data */
-        CONSTEXPR DataType type() noexcept {
+        constexpr DataType type() noexcept {
             this->get_value();
             return _type;
         }
@@ -5687,7 +5689,7 @@ namespace csv {
         long double value = 0;    /**< Cached numeric value */
         csv::string_view sv = ""; /**< A pointer to this field's text */
         DataType _type = DataType::UNKNOWN; /**< Cached data type value */
-        CONSTEXPR void get_value() noexcept {
+        constexpr void get_value() noexcept {
             /* Check to see if value has been cached previously, if not
              * evaluate it
              */
@@ -5710,10 +5712,10 @@ namespace csv {
             : data(_data), data_start(_data_start), fields_start(_field_bounds) {}
 
         /** Indicates whether row is empty or not */
-        CONSTEXPR bool empty() const noexcept { return this->size() == 0; }
+        constexpr bool empty() const noexcept { return this->size() == 0; }
 
         /** Return the number of fields in this row */
-        CONSTEXPR size_t size() const noexcept { return row_length; }
+        constexpr size_t size() const noexcept { return row_length; }
 
         /** @name Value Retrieval */
         ///@{
@@ -5767,11 +5769,11 @@ namespace csv {
             iterator operator-(difference_type n) const;
 
             /** Two iterators are equal if they point to the same field */
-            CONSTEXPR bool operator==(const iterator& other) const noexcept {
+            constexpr bool operator==(const iterator& other) const noexcept {
                 return this->i == other.i;
             };
 
-            CONSTEXPR bool operator!=(const iterator& other) const noexcept { return !operator==(other); }
+            constexpr bool operator!=(const iterator& other) const noexcept { return !operator==(other); }
 
 #ifndef NDEBUG
             friend CSVRow;
@@ -5827,13 +5829,13 @@ namespace csv {
      *           CSVRow is still alive.
      */
     template<>
-    CONSTEXPR csv::string_view CSVField::get<csv::string_view>() {
+    constexpr csv::string_view CSVField::get<csv::string_view>() {
         return this->sv;
     }
 
     /** Retrieve this field's value as a long double */
     template<>
-    CONSTEXPR long double CSVField::get<long double>() {
+    constexpr long double CSVField::get<long double>() {
         if (!is_num()) {
             return 0.0f;
         }
@@ -5846,14 +5848,14 @@ namespace csv {
 
     /** Compares the contents of this field to a string */
     template<>
-    CONSTEXPR bool CSVField::operator==(const char * other) const noexcept
+    constexpr bool CSVField::operator==(const char * other) const noexcept
     {
         return this->sv == other;
     }
 
     /** Compares the contents of this field to a string */
     template<>
-    CONSTEXPR bool CSVField::operator==(csv::string_view other) const noexcept
+    constexpr bool CSVField::operator==(csv::string_view other) const noexcept
     {
         return this->sv == other;
     }
@@ -5871,7 +5873,7 @@ namespace csv {
          *  ASCII number for a character and, v[i + 128] labels it according to
          *  the CSVReader::ParseFlags enum
          */
-        HEDLEY_CONST CONSTEXPR ParseFlagMap make_parse_flags(char delimiter) {
+        HEDLEY_CONST constexpr ParseFlagMap make_parse_flags(char delimiter) {
             std::array<ParseFlags, 256> ret = {};
             for (int i = -128; i < 128; i++) {
                 const int arr_idx = i + 128;
@@ -5892,7 +5894,7 @@ namespace csv {
          *  ASCII number for a character and, v[i + 128] labels it according to
          *  the CSVReader::ParseFlags enum
          */
-        HEDLEY_CONST CONSTEXPR ParseFlagMap make_parse_flags(char delimiter, char quote_char) {
+        HEDLEY_CONST constexpr ParseFlagMap make_parse_flags(char delimiter, char quote_char) {
             std::array<ParseFlags, 256> ret = make_parse_flags(delimiter);
             ret[(size_t)quote_char + 128] = ParseFlags::QUOTE;
             return ret;
@@ -5902,7 +5904,7 @@ namespace csv {
          *  ASCII number for a character c and, v[i + 128] is true if
          *  c is a whitespace character
          */
-        HEDLEY_CONST CONSTEXPR WhitespaceMap make_ws_flags(const char* ws_chars, size_t n_chars) {
+        HEDLEY_CONST constexpr WhitespaceMap make_ws_flags(const char* ws_chars, size_t n_chars) {
             std::array<bool, 256> ret = {};
             for (int i = -128; i < 128; i++) {
                 const int arr_idx = i + 128;
@@ -6054,16 +6056,16 @@ namespace csv {
             /** Indicate the last block of data has been parsed */
             void end_feed();
 
-            CONSTEXPR ParseFlags parse_flag(const char ch) const noexcept {
+            constexpr ParseFlags parse_flag(const char ch) const noexcept {
                 return _parse_flags.data()[ch + 128];
             }
 
-            CONSTEXPR ParseFlags compound_parse_flag(const char ch) const noexcept {
+            constexpr ParseFlags compound_parse_flag(const char ch) const noexcept {
                 return quote_escape_flag(parse_flag(ch), this->quote_escape);
             }
 
             /** Whether or not this CSV has a UTF-8 byte order mark */
-            CONSTEXPR bool utf8_bom() const { return this->_utf8_bom; }
+            constexpr bool utf8_bom() const { return this->_utf8_bom; }
 
             void set_output(RowCollection& rows) { this->_records = &rows; }
 
@@ -6090,7 +6092,7 @@ namespace csv {
             ///@}
 
             /** Whether or not source needs to be read in chunks */
-            CONSTEXPR bool no_chunk() const { return this->source_size < ITERATION_CHUNK_SIZE; }
+            constexpr bool no_chunk() const { return this->source_size < ITERATION_CHUNK_SIZE; }
 
             /** Parse the current chunk of data *
              *
@@ -6118,7 +6120,7 @@ namespace csv {
             /** Where complete rows should be pushed to */
             RowCollection* _records = nullptr;
 
-            CONSTEXPR bool ws_flag(const char ch) const noexcept {
+            constexpr bool ws_flag(const char ch) const noexcept {
                 return _ws_flags.data()[ch + 128];
             }
 
@@ -6295,10 +6297,10 @@ namespace csv {
             iterator(CSVReader*, CSVRow&&);
 
             /** Access the CSVRow held by the iterator */
-            CONSTEXPR reference operator*() { return this->row; }
+            constexpr reference operator*() { return this->row; }
 
             /** Return a pointer to the CSVRow the iterator has stopped at */
-            CONSTEXPR pointer operator->() { return &(this->row); }
+            constexpr pointer operator->() { return &(this->row); }
 
             iterator& operator++();   /**< Pre-increment iterator */
             iterator operator++(int); /**< Post-increment ierator */
@@ -6307,11 +6309,11 @@ namespace csv {
             /** Returns true if iterators were constructed from the same CSVReader
              *  and point to the same row
              */
-            CONSTEXPR bool operator==(const iterator& other) const noexcept {
+            constexpr bool operator==(const iterator& other) const noexcept {
                 return (this->daddy == other.daddy) && (this->i == other.i);
             }
 
-            CONSTEXPR bool operator!=(const iterator& other) const noexcept { return !operator==(other); }
+            constexpr bool operator!=(const iterator& other) const noexcept { return !operator==(other); }
         private:
             CSVReader * daddy = nullptr;  // Pointer to parent
             CSVRow row;                   // Current row
@@ -6379,10 +6381,10 @@ namespace csv {
          *  @note Gives an accurate answer regardless of when it is called.
          *
          */
-        CONSTEXPR bool empty() const noexcept { return this->n_rows() == 0; }
+        constexpr bool empty() const noexcept { return this->n_rows() == 0; }
 
         /** Retrieves the number of rows that have been read so far */
-        CONSTEXPR size_t n_rows() const noexcept { return this->_n_rows; }
+        constexpr size_t n_rows() const noexcept { return this->_n_rows; }
 
         /** Whether or not CSV was prefixed with a UTF-8 bom */
         bool utf8_bom() const noexcept { return this->parser->utf8_bom(); }
@@ -7936,7 +7938,7 @@ namespace csv {
                     if (c >= 0x00 && c <= 0x1f)
                     {
                         // print character c as \uxxxx
-                        sprintf(&result[pos + 1], "u%04x", int(c));
+                        sprintf_s(&result[pos + 1], 5, "u%04x", int(c));
                         pos += 6;
                         // overwrite trailing null character
                         result[pos] = '\\';
@@ -8375,6 +8377,8 @@ namespace csv {
 // UE4: disallow windows platform types
 // this was enabled at the top of the file
 #ifdef _WIN32
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 4)
     #include "Windows/PostWindowsApi.h"
+#endif
     #include "Windows/HideWindowsPlatformTypes.h"
 #endif
