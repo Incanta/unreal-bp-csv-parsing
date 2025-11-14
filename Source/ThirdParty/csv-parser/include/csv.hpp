@@ -32,6 +32,7 @@ SOFTWARE.
 // must be undone at the bottom of this file!
 #ifdef _WIN32
     #include "Windows/AllowWindowsPlatformTypes.h"
+    #include "Runtime/Launch/Resources/Version.h"
 #if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 4)
     #include "Windows/PreWindowsApi.h"
 #endif
